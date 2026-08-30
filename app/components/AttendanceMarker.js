@@ -2,6 +2,7 @@
 
 import MemberToggle from "./MemberToggle";
 import { useState,useEffect } from "react";
+import AttendanceCalendar from "./AttendanceCalendar";
 
 export default function AttendanceMarker() {
   const [selectedDate, setSelectedDate] = useState(
@@ -9,7 +10,7 @@ export default function AttendanceMarker() {
   );
 
   const [attendance, setAttendance] = useState({});
-
+ const [loaded, setLoaded] = useState(false);
   const toggleAttendance = (person) => {
     setAttendance((previous) => ({
       ...previous,
@@ -27,30 +28,61 @@ useEffect(() => {
   if (savedAttendance) {
     setAttendance(JSON.parse(savedAttendance));
   }
+
+  setLoaded(true);
 }, []);
-  return (
-    <div>
-      <h2>Mark Attendance</h2>
 
-      <p>Selected date: {selectedDate}</p>
+useEffect(() => {
+  if (loaded) {
+    localStorage.setItem(
+      "attendance",
+      JSON.stringify(attendance)
+    );
+  }
+}, [attendance, loaded]);
+ return (
+  <main className="attendance-page">
+    <h1>Attendance</h1>
 
-      <MemberToggle
-        name="Hima"
-        present={attendance[selectedDate]?.hima || false}
-        onToggle={() => toggleAttendance("hima")}
-      />
- 
-      <MemberToggle
-        name="Hunter"
-        present={attendance[selectedDate]?.hunter || false}
-        onToggle={() => toggleAttendance("hunter")}
-      />
+    <div className="attendance-layout">
+      
+      <section className="attendance-panel">
+        <h2>Mark Attendance</h2>
 
-      <MemberToggle
-        name="Chinju"
-        present={attendance[selectedDate]?.chinju || false}
-        onToggle={() => toggleAttendance("chinju")}
-      />
+       <div className="selected-date">
+  <span>Selected Date</span>
+  <strong>{selectedDate}</strong>
+</div>
+
+        <MemberToggle
+          name="Hima"
+          present={attendance[selectedDate]?.hima || false}
+          onToggle={() => toggleAttendance("hima")}
+        />
+
+        <MemberToggle
+          name="Hunter"
+          present={attendance[selectedDate]?.hunter || false}
+          onToggle={() => toggleAttendance("hunter")}
+        />
+
+        <MemberToggle
+          name="Chinju"
+          present={attendance[selectedDate]?.chinju || false}
+          onToggle={() => toggleAttendance("chinju")}
+        />
+      </section>
+
+      <section className="calendar-panel">
+        <AttendanceCalendar
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          attendance={attendance}
+        />
+      </section>
+
     </div>
+  </main>
+
   );
 }
