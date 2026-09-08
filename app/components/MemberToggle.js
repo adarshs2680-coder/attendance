@@ -1,6 +1,11 @@
 "use client";
 
-export default function MemberToggle({ name, present, onToggle }) {
+export default function MemberToggle({
+  name,
+  present,
+  onToggle,
+  disabled,
+}) {
   const sample = name.toLowerCase();
 
   return (
@@ -10,6 +15,7 @@ export default function MemberToggle({ name, present, onToggle }) {
       <button
         className={`toggle ${sample} ${present ? "active" : ""}`}
         onClick={onToggle}
+        disabled={disabled}
       >
         <img
           src={
